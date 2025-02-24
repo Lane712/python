@@ -21,6 +21,9 @@ stream_handler.setFormatter(logging.Formatter(
 ))
 logger.addHandler(stream_handler)
 
+## 源代码来源于https://gitee.com/mathematics128/T_A_N_K/blob/main/tank.py !
+## 源代码来源于https://gitee.com/mathematics128/T_A_N_K/blob/main/tank.py !!
+## 源代码来源于https://gitee.com/mathematics128/T_A_N_K/blob/main/tank.py !!!
 ## 幻影坦克处理函数
 def light(pic):
     """将图像转换为灰度图并提升亮度"""
