@@ -29,13 +29,13 @@ This script is designed to scrape movie and book information from the Douban web
 2. The script will scrape movie data from Douban and save it to doubanMovieTop250.json .
 
 ## Functions
-`index_soup()`:  
+#### `index_soup()`  
 Scrapes the main page of Douban for movie and book information.<br>
-`get_hrefs()`:  
+#### `get_hrefs()`  
 Extracts all sub-links from a given HTML file.<br>
-`movie_soup(html)`:  
+#### `movie_soup(html)`  
 Parses movie details from a given HTML content.<br>
-`main()`:  
+#### `main()`  
 Main function to orchestrate scraping and data saving.<br>
 
 ## Output
