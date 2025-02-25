@@ -22,11 +22,11 @@ This script is designed to scrape movie and book information from the Douban web
    pip install requests beautifulsoup4 fake_useragent lxml
 
 ## Usage
-1.Run the script using:
+1. Run the script using:
   ```bash
   python requests_get.py
   ```
-2.The script will scrape movie data from Douban and save it to doubanMovieTop250.json .
+2. The script will scrape movie data from Douban and save it to doubanMovieTop250.json .
 
 ## Functions
 `index_soup()`:  
