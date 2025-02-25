@@ -1,2 +1,2 @@
 # python
-Not yet, just for fun.
+Not yet, just for learning.
