@@ -13,6 +13,7 @@ This script is designed to scrape movie and book information from the Douban web
 - Requests
 - BeautifulSoup4
 - fake_useragent
+- lxml
 
 ## Installation
 1. Clone this repository.
