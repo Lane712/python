@@ -3,21 +3,15 @@ import re
 import time
 import json
 import sys
-from tqdm import tqdm
-import argparse
+import lxml
 import requests
 from bs4 import BeautifulSoup
-
-pattern_link= re.compile(r'<a href="(.*?)">')
-pattern_title = re.compile(r'<span class="title">(.*?)</span>')
-pattern_imgsrc = re.compile(r'<img.*src="(.*?)"',re.S)
-pattern_rating = re.compile(r'<span class="rating_num" property="v:average">(.*)</span>')
-pattern_quote = re.compile(r'<span class="inq">(.*)</span>')
-pattern_genre = re.compile(r'<br>([0-9]*)/(.*)</p>',re.S)
+from fake_useragent import UserAgent
 
 pattern_origin = re.compile(r'<span class="pl">制片国家/地区:</span>(.*?)<br/>')
-pattren_language = re.compile(r'<span class="pl">语言:</span>(.*?)<br/>')
+pattern_language = re.compile(r'<span class="pl">语言:</span>(.*?)<br/>')
 
+## 主页面简单处理
 def index_soup():
 
     url = "https://www.douban.com"
@@ -77,6 +71,8 @@ def index_soup():
     for author_div in author_divs:
         pass
 
+
+## 获取页面中的所有子链接
 def get_hrefs():
     ## 打开HTML，bs4库处理
     with open("豆瓣电影Top250.html",encoding="utf-8") as f:
@@ -93,13 +89,15 @@ def get_hrefs():
     print(f"{hrefs}")
     ## 写入JSON数据
     try:
-        with open("dubanMovieTop250.json","w", encoding="utf-8") as f:
+        with open("doubanMovieTop250.json","w", encoding="utf-8") as f:
             json.dump(hrefs, f, ensure_ascii=False, indent=2)
     except MemoryError as e:
         print(f"{e}")
 
+## 处理html
 def movie_soup(html):
-    soup = BeautifulSoup(html, "html.parser")
+    html = html.replace("<br />","")
+    soup = BeautifulSoup(html, "lxml")
     ## 标题
     title = soup.find("title").string.replace("\n", "").replace(" ", "").replace("(豆瓣)","")
     print(f"title:{title}")
@@ -121,7 +119,7 @@ def movie_soup(html):
     origin = pattern_origin.search(str(info_div)).group().replace("<span class=\"pl\">制片国家/地区:</span>","").replace("<br/>","").replace(" ","")
     print(f"origin:{origin}")
     ## 语言
-    language = pattren_language.search(str(info_div)).group().replace("<span class=\"pl\">语言:</span>","").replace("<br/>","").replace(" ","")
+    language = pattern_language.search(str(info_div)).group().replace("<span class=\"pl\">语言:</span>","").replace("<br/>","").replace(" ","")
     print(f"language:{language}")
     ## 时长
     runtime = info_div.find("span",property="v:runtime").get("content").strip()
@@ -136,29 +134,29 @@ def movie_soup(html):
     data["language"] = language
     data["runtime"] = runtime
 
+    summary = soup.find("div", attrs={"id":"link-report-intra"}).find("span", attrs={"class":"all hidden"})
+    if summary is not None:
+        data["summary"] = summary.string.replace(" ","").replace("\n","")
+        print(f"summary:{data['summary']}")
+    else:
+        summary = soup.find("div", attrs={"id":"link-report-intra"}).find("span", property ="v:summary")
+        if summary:
+            data["summary"] = summary.string.replace(" ","").replace("\n","")
+            print(f"summary:{data['summary']}")
+
     return data
 
 def main():
 
-    # with open("哪吒之魔童闹海.html", encoding="utf-8") as f:
-    #     html = f.read()
-    #     data = movie_soup(html)
+    ua = UserAgent(os=["Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X"])
+    head = {"User-Agent": ua.random}
+    print(f"head: {head}u")
+    time.sleep(1)
 
-    # try:
-    #     with open("哪吒之魔童闹海.json", "r", encoding="utf-8") as datafile:
-    #         existing_data = json.load(datafile)
-    # except (FileNotFoundError, json.JSONDecodeError):
-    #     existing_data = []
+    # head = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0"}
 
-    # existing_data.append(data)
-
-    # with open("哪吒之魔童闹海.json", "w", encoding="utf-8") as datafile:
-    #     json.dump(existing_data, datafile, ensure_ascii=False, indent=2)
-
-    head = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0"}
-    
     try:
-        with open("dubanMovieTop250.json","r",encoding="utf-8") as file:
+        with open("doubanMovieTop250.json","r",encoding="utf-8") as file:
             hrefs = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         hrefs = []
@@ -171,29 +169,38 @@ def main():
                 print(f"URL - {url} - SKIP!")
                 with open(f"{href["title"]}.html", "r", encoding="utf-8") as f:
                     html = f.read()
-                    data.append(movie_soup(html))
+                    movie = movie_soup(html)
+                    movie["url"] = url
+                    print(f"url:{url}")
+                    data.append(movie)
+                    time.sleep(.5)
             else:
                 response = requests.get(url, headers=head, timeout=10)
                 print(f"URL - {url} - {response.status_code}")
+                if response.status_code != 200:
+                    print(f"request error!")
+                    time.sleep(1)
+                    continue
                 html = response.text
                 with open(f"{href["title"]}.html", "w", encoding="utf-8") as f:
                     f.write(html)
-                    data.append(movie_soup(html))
+                    movie = movie_soup(html)
+                    movie["url"] = url
+                    print(f"url:{url}")
+                    data.append(movie)
                     time.sleep(2)
-            
         except requests.RequestException as re:
             print(f"Requests Error:{re}")
         except KeyboardInterrupt:
+            with open('豆瓣电影Top250.json','w',encoding='utf-8') as datafile:
+                json.dump(data, datafile, ensure_ascii=False, indent=2)
             print(f"Quit!")
             sys.exit(0)
         except Exception as err:
             print(f"Error:{err}")
-    
+
     with open("豆瓣电影Top250.json","w",encoding="utf-8") as datafile:
         json.dump(data, datafile, ensure_ascii=False, indent=2)
 
-    # return data
-        
 if __name__ == '__main__':
     main()
-    
