@@ -1,9 +1,4 @@
-import os
-import re
-import time
-import json
-import sys
-import lxml
+import os,time,sys,re,json
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -15,7 +10,7 @@ pattern_language = re.compile(r'<span class="pl">语言:</span>(.*?)<br/>')
 def index_soup():
 
     url = "https://www.douban.com"
-    head = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0"}
+    head = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"}
     response = requests.get(url, headers=head)
     
     if not response.ok:
@@ -70,7 +65,6 @@ def index_soup():
     book_authors = []
     for author_div in author_divs:
         pass
-
 
 ## 获取页面中的所有子链接
 def get_hrefs():
@@ -148,12 +142,11 @@ def movie_soup(html):
 
 def main():
 
-    ua = UserAgent(os=["Windows", "Linux", "Ubuntu", "Chrome OS", "Mac OS X"])
+    # emulated browser
+    ua = UserAgent(os=["Windows", "Linux"])
     head = {"User-Agent": ua.random}
     print(f"head: {head}u")
     time.sleep(1)
-
-    # head = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0"}
 
     try:
         with open("doubanMovieTop250.json","r",encoding="utf-8") as file:
@@ -162,6 +155,7 @@ def main():
         hrefs = []
 
     data = []
+    count = 0
     for href in hrefs:
         try:
             url = href["href"]
@@ -175,6 +169,10 @@ def main():
                     data.append(movie)
                     time.sleep(.5)
             else:
+                # times limited !!!
+                count = count + 1
+                if count > 10:
+                    break
                 response = requests.get(url, headers=head, timeout=10)
                 print(f"URL - {url} - {response.status_code}")
                 if response.status_code != 200:
