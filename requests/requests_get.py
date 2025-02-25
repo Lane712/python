@@ -172,6 +172,7 @@ def main():
                 # times limited !!!
                 count = count + 1
                 if count > 10:
+                    print("Times limited! Request counts are more than 10.")
                     break
                 response = requests.get(url, headers=head, timeout=10)
                 print(f"URL - {url} - {response.status_code}")
