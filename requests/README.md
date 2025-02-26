@@ -18,9 +18,9 @@ This script is designed to scrape movie and book information from the Douban web
 ## Installation
 1. Clone this repository.
 2. Install the required packages using pip:
-   ```bash
-   pip install requests beautifulsoup4 fake_useragent lxml
-   ```
+  ```bash
+  pip install requests beautifulsoup4 fake_useragent lxml
+  ```
 
 ## Usage
 1. Run the script using:
