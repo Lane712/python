@@ -1,67 +1,71 @@
 # Douban Web Scraper
 
-This script is designed to scrape movie and book information from the Douban website. It extracts details such as titles, ratings, genres, and summaries, and stores them in JSON format.
-
-## Features
-- Extracts movie and book data from Douban.
-- Handles pagination and multiple pages.
-- Uses BeautifulSoup for HTML parsing and fake_useragent for random User-Agent headers.
-- Saves extracted data in JSON format.
+This Python script is designed to crawl movie information from Douban (a popular Chinese film and book review website). Below is an overview of its functionality and structure.
 
 ## Requirements
-- Python 3.x
-- Requests
+
+- python 3.x
+- requests
 - BeautifulSoup4
 - fake_useragent
 - lxml
+- re
 
-## Installation
-1. Clone this repository.
-2. Install the required packages using pip:
-   ```bash
-   pip install requests beautifulsoup4 fake_useragent lxml
+## Structure
+
+```
+ project/
+ ├── movie_htmls/
+ │   └── [title].html
+ ├── 豆瓣电影Top250.html
+ ├── 豆瓣电影Top250.json
+ ├── hrefs.json
+ ├── movies.json
+ └── scraper.py
+```
 
 ## Usage
-1. Run the script using:
-  ```bash
-  python requests_get.py
-  ```
-2. The script will scrape movie data from Douban and save it to doubanMovieTop250.json .
 
-## Functions
-#### `index_soup()`  
-Scrapes the main page of Douban for movie and book information.<br>
-#### `get_hrefs()`  
-Extracts all sub-links from a given HTML file.<br>
-#### `movie_soup(html)`  
-Parses movie details from a given HTML content.<br>
-#### `main()`  
-Main function to orchestrate scraping and data saving.<br>
+1. Beginning:
+   The script starts by defining HTTP headers and regular expressions to extract specific movie details (e.g., origin and language).
 
-## Output
-The script will generate a JSON file (`doubanMovieTop250.json`) containing movie data, including:
->Title, Rating, Genre, Origin, Language, Runtime, Summary.
+2. HTML Parsing:
+   
+   - `prettify_html `formats and saves HTML content to local storage.
+   
+   - `parse_homepage` extracts basic information from Douban's homepage (partially implemented).
+   
+   - `get_hrefs_from_html` parses movie links from a saved HTML file and saves them into a JSON file.
+   
+   - `read_hrefs_from_json` reads movie links from a JSON file for further processing.
 
-## Disclaimer  
-This script is intended solely for testing and educational purposes. The primary goal is to facilitate learning about web scraping techniques, data extraction, and Python programming. The following points must be noted:
+3. Fetching Pages:
+   The `fetch_page` function retrieves HTML content from a target URL using a randomized user agent to mimic browser requests and avoid detection.
 
-### 1. Educational Use Only:
-This script is designed to help users understand the basics of web scraping and data processing. It is not intended for commercial use or any other unauthorized purposes.<br>
+4. Detailed Movie Data Extraction:
+   The `parse_movie_details` function extracts detailed information from each movie's page, including:
 
-### 2. Respect Website Policies:
-Always review and adhere to the website's terms of service and robots.txt file. This script should not be used to scrape data from websites that explicitly prohibit web scraping.<br>
+> Title,  Poster URL,  Rating,  Genres,  region,  Languag,  Runtime,  Summary
 
-### 3. Responsible Usage:
-When using this script, ensure that your actions do not place undue stress on the website's servers. The script includes delays to minimize impact, but users should avoid excessive or rapid requests.<br>
+5. Data Storage:
+   
+   - Movie links are stored as JSON files.
+   
+   - Parsed movie details are saved in a structured movies.json file.
+   
+   - HTML pages for each movie are saved locally under the movie_htmls directory for cache purposes.
 
-### 4. Data Handling:
-Any data extracted using this script should be used responsibly and ethically. It is intended for learning and testing purposes only and should not be distributed or used for commercial gain without permission from the website owner.<br>
+## Notes
 
-### 5. No Guarantee of Functionality:
-This script is provided as-is without any warranty. The website's structure may change over time, and the script may need to be updated accordingly.<br>
+Rate Limiting: The script includes a 3-second delay between requests to avoid overwhelming the server. Adjust this value if needed.
 
-### 6. Legal and Ethical Considerations:
-By using this script, you acknowledge that you are responsible for your actions and that you will comply with all applicable laws and regulations. The author of this script is not liable for any misuse or unintended consequences resulting from its use.<br>
+Error Handling: Basic error handling is implemented, but additional checks may be required for robustness.
+
+Data Accuracy: The script relies on the structure of Douban's HTML. If the website changes, the parsing logic may need updates. 
+
+## Disclaimer
+
+This script is intended for educational purposes only. Web scraping may violate the terms of service of some websites. Always ensure compliance with local laws and website policies before crawling.
 
 ---
 
