@@ -3,10 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 Edg/132.0.0.0"
-}
-
 # 编译正则表达式
 PATTERN_ORIGIN = re.compile(r'<span class="pl">制片国家/地区:</span>(.*?)<br/>')
 PATTERN_LANGUAGE = re.compile(r'<span class="pl">语言:</span>(.*?)<br/>')
@@ -178,7 +174,6 @@ def main():
 
     # 存储数据
     update_movies_data(fetched_movies)
-
     print(f"Done! Add {len(fetched_movies)} movies data.")
 
 if __name__ == '__main__':
