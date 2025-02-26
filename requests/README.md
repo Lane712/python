@@ -40,12 +40,14 @@ This Python script is designed to crawl movie information from Douban (a popular
    - `read_hrefs_from_json` reads movie links from a JSON file for further processing.
 
 3. Fetching Pages:
+
 The `fetch_page` function retrieves HTML content from a target URL using a randomized user agent to mimic browser requests and avoid detection.
 
-4. Detailed Movie Data Extraction:
+5. Detailed Movie Data Extraction:
+
 The `parse_movie_details` function extracts detailed information from each movie's page, including:
 
-> Title,  Poster URL,  Rating,  Genres,  region,  Languag,  Runtime,  Summary
+  > Title,  Poster URL,  Rating,  Genres,  region,  Languag,  Runtime,  Summary
 
 5. Data Storage:
    
