@@ -200,4 +200,4 @@ def main():
     print(f"Done! Add {len(fetched_movies)} movies data.")
 
 if __name__ == '__main__':
-    main()    main()
+    main()
