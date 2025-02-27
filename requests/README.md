@@ -1,4 +1,4 @@
-# Douban Web Scraper
+# Douban Web Scraper （Bug!!!）
 
 This Python script is designed to crawl movie information from Douban (a popular Chinese film and book review website). Below is an overview of its functionality and structure.
 
